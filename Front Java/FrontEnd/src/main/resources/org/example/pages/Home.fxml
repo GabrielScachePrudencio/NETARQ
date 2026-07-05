@@ -2,10 +2,25 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.HomeController">
-   <children>
-      <Button layoutX="267.0" layoutY="188.0" mnemonicParsing="false" text="Pesquisar" onAction="#pesquisar" />
-      <Label layoutX="276.0" layoutY="153.0" text="NET ARQ" />
-   </children>
-</AnchorPane>
+<StackPane prefHeight="400.0" prefWidth="600.0"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.HomeController"
+           stylesheets="@../styles/theme.css">
+
+   <VBox alignment="CENTER" spacing="12">
+      <padding>
+         <Insets top="40" right="40" bottom="40" left="40" />
+      </padding>
+
+      <Label text="NET ARQ" styleClass="titulo" />
+      <Label text="Explore seus arquivos com desempenho nativo" styleClass="subtitulo" />
+
+      <Region prefHeight="20" />
+
+      <Button text="Pesquisar" onAction="#pesquisar" />
+   </VBox>
+
+</StackPane>

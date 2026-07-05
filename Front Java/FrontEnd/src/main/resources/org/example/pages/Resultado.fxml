@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.controller.ResultadoController"
-            prefHeight="400.0" prefWidth="600.0">
+            stylesheets="@../styles/theme.css">
 
-    <TreeView fx:id="treeView"
-              AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-              AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"/>
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <Button text="← Voltar" styleClass="button-voltar" onAction="#voltar" />
+            <Label text="Resultado da pesquisa" styleClass="top-bar-titulo" />
+        </HBox>
+    </top>
 
-</AnchorPane>
+    <center>
+        <TreeView fx:id="treeView" />
+    </center>
+
+</BorderPane>

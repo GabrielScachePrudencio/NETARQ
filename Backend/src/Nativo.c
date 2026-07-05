@@ -47,3 +47,9 @@ EXPORT void obterDataFormatada(void* handle, int index, char* buffer, int buffer
 EXPORT void liberar(void* handle) {
     free(handle);
 }
+
+// NOVO: devolve o caminho completo do item
+EXPORT const char* obterCaminho(void* handle, int index) {
+    ListaArquivos* lista = (ListaArquivos*) handle;
+    return lista->dados[index].caminho;
+}

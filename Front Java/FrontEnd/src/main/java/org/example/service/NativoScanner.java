@@ -15,46 +15,57 @@ public class NativoScanner implements AutoCloseable {
     private static final MethodHandle hObterEhDiretorio;
     private static final MethodHandle hObterDataFormatada;
     private static final MethodHandle hLiberar;
+    private static final MethodHandle hObterCaminho;
 
     static {
-        // ajuste o caminho/nome conforme seu SO: "nativo.dll" ou "libnativo.so"
-        lookup = SymbolLookup.libraryLookup(
-                "C:\\Users\\Flavio\\Desktop\\Linguagens\\PROJETOS\\NetArq\\Backend\\nativo.dll",
-                Arena.global()
-        );
+
+        System.load("C:\\Users\\Flavio\\Desktop\\Linguagens\\PROJETOS\\NetArq\\Backend\\nativo.dll");
+
+        lookup = SymbolLookup.loaderLookup();
+
+//        // ajuste o caminho/nome conforme seu SO: "nativo.dll" ou "libnativo.so"
+//        lookup = SymbolLookup.libraryLookup(
+//                "C:\\Users\\Flavio\\Desktop\\Linguagens\\PROJETOS\\NetArq\\Backend\\nativo.dll",
+//                Arena.global()
+//        );
         hEscanear = linker.downcallHandle(
-                lookup.find("escanear").get(),
+                lookup.find("escanear").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
         );
 
         hObterTotal = linker.downcallHandle(
-                lookup.find("obterTotal").get(),
+                lookup.find("obterTotal").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS)
         );
 
         hObterNome = linker.downcallHandle(
-                lookup.find("obterNome").get(),
+                lookup.find("obterNome").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
         );
 
         hObterTamanho = linker.downcallHandle(
-                lookup.find("obterTamanho").get(),
+                lookup.find("obterTamanho").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
         );
 
         hObterEhDiretorio = linker.downcallHandle(
-                lookup.find("obterEhDiretorio").get(),
+                lookup.find("obterEhDiretorio").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
         );
 
         hObterDataFormatada = linker.downcallHandle(
-                lookup.find("obterDataFormatada").get(),
+                lookup.find("obterDataFormatada").orElseThrow(),
                 FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
         );
 
         hLiberar = linker.downcallHandle(
-                lookup.find("liberar").get(),
+                lookup.find("liberar").orElseThrow(),
                 FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
+        );
+
+        hObterCaminho = linker.downcallHandle(
+                lookup.find("obterCaminho").orElseThrow(),
+                FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
         );
     }
 
@@ -124,6 +135,15 @@ public class NativoScanner implements AutoCloseable {
             throw new RuntimeException(e);
         } finally {
             arena.close(); // libera a memória do lado Java (a string do caminho, o buffer)
+        }
+    }
+
+    public String getCaminho(int index) {
+        try {
+            MemorySegment ptr = (MemorySegment) hObterCaminho.invoke(handle, index);
+            return ptr.reinterpret(512).getString(0);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 }

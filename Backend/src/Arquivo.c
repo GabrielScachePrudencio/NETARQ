@@ -39,23 +39,23 @@ void findByFolder(const char *caminho, ListaArquivos *lista){
         // Copia o nome do arquivo
         strcpy(lista->dados[lista->total].nome, item->d_name);
 
+        // 1. Monta o caminho completo do arquivo. Ex: "C:\\Caminho\\arquivo.txt"
+        snprintf(caminhoCompleto, sizeof(caminhoCompleto), "%s\\%s", caminho, item->d_name);
+
+        strcpy(lista->dados[lista->total].caminho, caminhoCompleto);
+
         // Define se é pasta ou arquivo
        
         // --- NOVO: BUSCANDO TAMANHO E DATA ---
         
-        // 1. Monta o caminho completo do arquivo. Ex: "C:\\Caminho\\arquivo.txt"
-        snprintf(caminhoCompleto, sizeof(caminhoCompleto), "%s\\%s", caminho, item->d_name);
-
-        // 2. Chama a função stat para ler os metadados do arquivo
-        // 2. Chama a função stat para ler os metadados do arquivo
+        
+       // 2. Chama a função stat para ler os metadados do arquivo
+        
+       
         if (stat(caminhoCompleto, &atributos) == 0) {
-            // Define se é diretório usando o resultado do stat (mais portável que d_type)
             lista->dados[lista->total].eh_diretorio = S_ISDIR(atributos.st_mode) ? 1 : 0;
-
-            // Guarda o tamanho real em bytes
             lista->dados[lista->total].tamanho = atributos.st_size;
 
-            // Converte o timestamp de modificação (st_mtime) para formato local
             struct tm *tempoLocal = localtime(&atributos.st_mtime);
 
             lista->dados[lista->total].date.dia     = tempoLocal->tm_mday;

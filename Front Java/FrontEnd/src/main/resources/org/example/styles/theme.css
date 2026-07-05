@@ -1,0 +1,108 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #fafafa;
+}
+
+/* ===== Botões ===== */
+.button {
+    -fx-background-color: #1db954;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 24 10 24;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(29,185,84,0.25), 8, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #17a34a;
+}
+
+.button:pressed {
+    -fx-background-color: #14893d;
+}
+
+.button-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1db954;
+    -fx-border-color: #1db954;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: none;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #eafbf1;
+}
+
+/* ===== Textos ===== */
+.titulo {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+.subtitulo {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888888;
+}
+
+.label-campo {
+    -fx-font-size: 13px;
+    -fx-text-fill: #444444;
+    -fx-font-weight: 600;
+}
+
+/* ===== Campo de texto ===== */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused {
+    -fx-border-color: #1db954;
+}
+
+/* ===== TreeView ===== */
+.tree-view {
+    -fx-background-color: white;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 1;
+}
+
+.tree-cell {
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 13px;
+}
+
+.tree-cell:filled:hover {
+    -fx-background-color: #eafbf1;
+}
+
+.tree-cell:filled:selected {
+    -fx-background-color: #1db954;
+    -fx-text-fill: white;
+}
+
+.tree-cell:filled:selected .text {
+    -fx-fill: white;
+}
+
+/* ===== Barra superior ===== */
+.top-bar {
+    -fx-background-color: white;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 16 24 16 24;
+}
+
+.top-bar-titulo {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}

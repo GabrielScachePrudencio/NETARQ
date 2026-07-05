@@ -14,6 +14,7 @@ typedef struct  {
 typedef struct 
 {
     char nome[256];
+    char caminho[512];
     long tamanho;
     int eh_diretorio;
     Datatime date;

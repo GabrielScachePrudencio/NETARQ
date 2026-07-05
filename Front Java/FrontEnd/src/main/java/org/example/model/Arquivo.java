@@ -7,14 +7,16 @@ import java.time.LocalDateTime;
 public class Arquivo {
     private String nome;
     private Integer tamanho;
+    private String caminho;
     private int eh_diretorio;
     LocalDateTime date;
 
-    public Arquivo( String nome, Integer tamanho, int eh_diretorio, LocalDateTime date ){
+    public Arquivo( String nome, Integer tamanho, int eh_diretorio, LocalDateTime date, String caminho){
         setNome(nome);
         setTamanho(tamanho);
         setEh_diretorio(eh_diretorio);
         setDate(date);
+        setCaminho(caminho);
     }
 
     public LocalDateTime getDate() {
@@ -47,5 +49,23 @@ public class Arquivo {
 
     public void setTamanho(Integer tamanho) {
         this.tamanho = tamanho;
+    }
+
+    public String getCaminho(){
+        return caminho;
+    }
+    public void setCaminho(String caminho){
+        this.caminho = caminho;
+    }
+
+    @Override
+    public String toString() {
+        return "\nArquivo{" +
+                "caminho='" + caminho + '\'' +
+                ", nome='" + nome + '\'' +
+                ", tamanho=" + tamanho +
+                ", eh_diretorio=" + eh_diretorio +
+                ", date=" + date +
+                '}';
     }
 }
