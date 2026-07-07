@@ -19,6 +19,10 @@ public class Arquivo {
         setCaminho(caminho);
     }
 
+    public Arquivo(){
+
+    }
+
     public LocalDateTime getDate() {
         return date;
     }

@@ -60,7 +60,6 @@ public class ArquivoService {
             }
         }
 
-        System.out.println(arquivos.toString());
 
 
         return arquivos;
