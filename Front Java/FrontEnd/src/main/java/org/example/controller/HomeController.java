@@ -10,30 +10,41 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.example.model.ComputadorRecente;
+import org.example.model.Computador;
+import org.example.model.ListaComputador;
+import org.example.service.ComputadorService;
 
 public class HomeController {
 
     @FXML private TextField txtCodigo;
 
-    @FXML private TableView<ComputadorRecente> tabelaRecentes;
-    @FXML private TableColumn<ComputadorRecente, String> colComputador;
-    @FXML private TableColumn<ComputadorRecente, String> colCodigo;
-    @FXML private TableColumn<ComputadorRecente, String> colStatus;
-    @FXML private TableColumn<ComputadorRecente, String> colAcesso;
+    @FXML private Label lblMeuNome;
+    @FXML private Label lblMeuCodigo;
+
+    @FXML private TableView<Computador> tabelaRecentes;
+    @FXML private TableColumn<Computador, String> colComputador;
+    @FXML private TableColumn<Computador, String> colCodigo;
+    @FXML private TableColumn<Computador, String> colStatus;
+
+    private final ComputadorService computadorService = new ComputadorService();
+    private ListaComputador listaComputador;
 
     @FXML
     public void initialize() {
         configurarColunas();
-        tabelaRecentes.setItems(carregarDadosFake());
 
-        // Clique duplo numa linha "conecta" e abre o explorador de arquivos
+        listaComputador = computadorService.carregar();
+
+        atualizarIdentidade();
+        atualizarTabela();
+
         tabelaRecentes.setRowFactory(tv -> {
-            TableRow<ComputadorRecente> row = new TableRow<>();
+            TableRow<Computador> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
                     conectar(row.getItem());
@@ -41,12 +52,77 @@ public class HomeController {
             });
             return row;
         });
+
+        if (listaComputador.getUsuario().getNome() == null
+                || listaComputador.getUsuario().getNome().isBlank()) {
+            pedirNomeUsuario();
+        }
     }
 
+    // ===== Identidade (nome/código deste computador) =====
+
+    private void atualizarIdentidade() {
+        Computador usuario = listaComputador.getUsuario();
+        lblMeuNome.setText(
+                usuario.getNome() != null && !usuario.getNome().isBlank()
+                        ? usuario.getNome()
+                        : "Sem nome definido"
+        );
+        lblMeuCodigo.setText(usuario.getCodigo());
+    }
+
+    private void pedirNomeUsuario() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Bem-vindo ao NET ARQ");
+        dialog.setHeaderText("Como podemos chamar este computador?");
+        dialog.setContentText("Nome:");
+
+        dialog.showAndWait().ifPresent(nome -> {
+            if (!nome.isBlank()) {
+                computadorService.atualizarNomeUsuario(listaComputador, nome.trim());
+                atualizarIdentidade();
+            }
+        });
+    }
+
+    @FXML
+    public void editarNome(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog(listaComputador.getUsuario().getNome());
+        dialog.setTitle("Editar nome");
+        dialog.setHeaderText("Alterar o nome deste computador");
+        dialog.setContentText("Nome:");
+
+        dialog.showAndWait().ifPresent(nome -> {
+            if (!nome.isBlank()) {
+                computadorService.atualizarNomeUsuario(listaComputador, nome.trim());
+                atualizarIdentidade();
+            }
+        });
+    }
+
+    @FXML
+    public void copiarCodigo(ActionEvent event) {
+        String codigo = listaComputador.getUsuario().getCodigo();
+
+        ClipboardContent content = new ClipboardContent();
+        content.putString(codigo);
+        Clipboard.getSystemClipboard().setContent(content);
+
+        // feedback rápido e não intrusivo
+        Tooltip tooltip = new Tooltip("Código copiado!");
+        tooltip.show(lblMeuCodigo.getScene().getWindow());
+
+        javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(
+                javafx.util.Duration.seconds(1.2));
+        delay.setOnFinished(e -> tooltip.hide());
+        delay.play();
+    }
+
+    // ===== Resto (sem mudanças) =====
+
     private void configurarColunas() {
-        // Coluna "Computador" com avatar + nome
         colComputador.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        colComputador.setCellFactory(col -> new TableCell<ComputadorRecente, String>() {
+        colComputador.setCellFactory(col -> new TableCell<Computador, String>() {
             @Override
             protected void updateItem(String nome, boolean empty) {
                 super.updateItem(nome, empty);
@@ -55,7 +131,7 @@ public class HomeController {
                     setGraphic(null);
                     return;
                 }
-                ComputadorRecente c = getTableView().getItems().get(getIndex());
+                Computador c = getTableView().getItems().get(getIndex());
 
                 Label avatar = new Label(c.getIniciais());
                 avatar.getStyleClass().add("avatar-circulo");
@@ -74,9 +150,8 @@ public class HomeController {
 
         colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
 
-        // Coluna "Status" com bolinha colorida
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colStatus.setCellFactory(col -> new TableCell<ComputadorRecente, String>() {
+        colStatus.setCellFactory(col -> new TableCell<Computador, String>() {
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
@@ -99,28 +174,23 @@ public class HomeController {
                 setGraphic(linha);
             }
         });
-
-        colAcesso.setCellValueFactory(new PropertyValueFactory<>("ultimoAcesso"));
     }
 
-    // Dados fake só pra dar a cara de "computadores acessados"
-    private ObservableList<ComputadorRecente> carregarDadosFake() {
-        return FXCollections.observableArrayList(
-                new ComputadorRecente("PC-Flavio-Trabalho", "482 719 305", "online", "Agora", System.getProperty("user.home")),
-                new ComputadorRecente("Notebook-Casa", "119 204 887", "offline", "Ontem, 22:14", System.getProperty("user.home")),
-                new ComputadorRecente("Servidor-Dev", "603 558 122", "online", "27/06/2026", System.getProperty("user.home")),
-                new ComputadorRecente("PC-Sala", "775 331 940", "offline", "20/06/2026", System.getProperty("user.home"))
+    private void atualizarTabela() {
+        ObservableList<Computador> computadores = FXCollections.observableArrayList(
+                listaComputador.getComputadoresCadastrados()
         );
+        tabelaRecentes.setItems(computadores);
     }
 
-    private void conectar(ComputadorRecente computador) {
+    private void conectar(Computador computador) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/org/example/pages/Resultado.fxml"));
             Parent root = loader.load();
 
             ResultadoController controller = loader.getController();
-            controller.carregarPastaInicial(computador.getCaminhoDemo());
+            controller.iniciarComputador(computador);
 
             Stage stage = (Stage) tabelaRecentes.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -133,24 +203,21 @@ public class HomeController {
     @FXML
     public void conectarPorCodigo(ActionEvent event) {
         String codigo = txtCodigo.getText().trim();
+
         if (codigo.isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "Digite um código para conectar.").showAndWait();
             return;
         }
-        // Aqui é só simulação: qualquer código "conecta" no mesmo diretório demo
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/org/example/pages/Resultado.fxml"));
-            Parent root = loader.load();
 
-            ResultadoController controller = loader.getController();
-            controller.carregarPastaInicial(System.getProperty("user.home"));
+        Computador computador = computadorService.conectarPorCodigo(codigo, listaComputador);
 
-            Stage stage = (Stage) txtCodigo.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Não foi possível conectar: " + e.getMessage()).showAndWait();
+        if (computador == null) {
+            new Alert(Alert.AlertType.ERROR, "Computador não encontrado. Verifique o código.").showAndWait();
+            return;
         }
+
+        atualizarTabela();
+        txtCodigo.clear();
+        conectar(computador);
     }
 }

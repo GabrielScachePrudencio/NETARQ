@@ -188,3 +188,37 @@
 }
 .status-online { -fx-background-color: #2ecc71; }
 .status-offline { -fx-background-color: #6a6a6a; }
+
+.card-identidade {
+    -fx-background-color: -fx-cor-card; /* use a cor de card que você já tem */
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+}
+
+.label-mini {
+    -fx-font-size: 11px;
+    -fx-opacity: 0.6;
+    -fx-font-weight: bold;
+}
+
+.identidade-nome {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.identidade-codigo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Consolas", monospace;
+    -fx-letter-spacing: 2px;
+}
+
+.botao-icone {
+    -fx-background-color: transparent;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.botao-secundario {
+    -fx-font-size: 12px;
+}
