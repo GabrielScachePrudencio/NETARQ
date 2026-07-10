@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Conexao {
 
     private static final String URL =
-            "jdbc:mysql://localhost:3307/netarq?serverTimezone=America/Sao_Paulo";
+            "jdbc:mysql://127.0.0.1:3307/netarq?serverTimezone=America/Sao_Paulo";
 
     private static final String USER = "root";
     private static final String PASSWORD = "root";

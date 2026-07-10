@@ -2,9 +2,16 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
-#include <sys/stat.h> // <- NOVA: Para pegar os metadados (tamanho e data)
-#include <time.h>     // <-- NOVA: Para converter o tempo
+#include <sys/stat.h>
+#include <time.h>
 #include "../include/Arquivo.h"
+
+// Separador de caminho correto por plataforma
+#ifdef _WIN32
+    #define SEPARADOR "\\"
+#else
+    #define SEPARADOR "/"
+#endif
 
 void inicializar(ListaArquivos *lista){
     printf("Inicializando lista...\n");
@@ -14,8 +21,8 @@ void inicializar(ListaArquivos *lista){
 void findByFolder(const char *caminho, ListaArquivos *lista){
     DIR *diretorio;
     struct dirent *item;
-    struct stat atributos;    // Guarda os metadados do arquivo
-    char caminhoCompleto[512]; // Armazena caminho + nome do arquivo
+    struct stat atributos;
+    char caminhoCompleto[512];
 
     inicializar(lista);
     diretorio = opendir(caminho);
@@ -26,32 +33,21 @@ void findByFolder(const char *caminho, ListaArquivos *lista){
     }
 
     while ((item = readdir(diretorio)) != NULL){
-        // Ignora "." e ".."
         if (strcmp(item->d_name, ".") == 0 || strcmp(item->d_name, "..") == 0)
             continue;
 
-        // Limita a capacidade máxima do array estático da struct (100 itens)
         if (lista->total >= 100) {
             printf("Aviso: Limite de 100 arquivos atingido.\n");
             break;
         }
 
-        // Copia o nome do arquivo
         strcpy(lista->dados[lista->total].nome, item->d_name);
 
-        // 1. Monta o caminho completo do arquivo. Ex: "C:\\Caminho\\arquivo.txt"
-        snprintf(caminhoCompleto, sizeof(caminhoCompleto), "%s\\%s", caminho, item->d_name);
+        // Usa o separador correto pra plataforma (era "\\" fixo antes)
+        snprintf(caminhoCompleto, sizeof(caminhoCompleto), "%s" SEPARADOR "%s", caminho, item->d_name);
 
         strcpy(lista->dados[lista->total].caminho, caminhoCompleto);
 
-        // Define se é pasta ou arquivo
-       
-        // --- NOVO: BUSCANDO TAMANHO E DATA ---
-        
-        
-       // 2. Chama a função stat para ler os metadados do arquivo
-        
-       
         if (stat(caminhoCompleto, &atributos) == 0) {
             lista->dados[lista->total].eh_diretorio = S_ISDIR(atributos.st_mode) ? 1 : 0;
             lista->dados[lista->total].tamanho = atributos.st_size;
@@ -72,13 +68,13 @@ void findByFolder(const char *caminho, ListaArquivos *lista){
 
         lista->total++;
     }
-    
+
     closedir(diretorio);
 }
 
 void exibirLista(ListaArquivos *lista) {
     printf("Itens contados de fato: %d\n", lista->total);
-    
+
     printf("==============================================================================================================\n");
     printf("%-40s %-12s %-12s %-20s\n", "Nome", "Tamanho (B)", "Tipo", "Data de Modificacao");
     printf("==============================================================================================================\n");
