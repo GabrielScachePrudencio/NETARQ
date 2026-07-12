@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane prefHeight="480.0" prefWidth="700.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.HomeController"
+            stylesheets="@../styles/theme.css">
+
+   <top>
+      <VBox styleClass="home-topo" spacing="18">
+         <padding>
+            <Insets top="28" right="32" bottom="20" left="32" />
+         </padding>
+
+         <VBox spacing="2">
+            <Label text="NET ARQ" styleClass="titulo" />
+            <Label text="Explore seus arquivos com desempenho nativo" styleClass="subtitulo" />
+         </VBox>
+
+         <!-- Identidade deste computador -->
+         <VBox styleClass="card-identidade" spacing="12">
+            <Label text="Este computador" styleClass="label-campo" />
+
+            <HBox spacing="24" alignment="CENTER_LEFT">
+
+               <!-- Nome -->
+               <VBox spacing="4" HBox.hgrow="ALWAYS">
+                  <Label text="NOME" styleClass="label-mini" />
+                  <HBox spacing="8" alignment="CENTER_LEFT">
+                     <Label fx:id="lblMeuNome" text="—" styleClass="identidade-nome" />
+                     <Button fx:id="btnEditarNome" text="✏️" onAction="#editarNome"
+                             styleClass="botao-icone" />
+                  </HBox>
+               </VBox>
+
+               <!-- Código -->
+               <VBox spacing="4">
+                  <Label text="CÓDIGO" styleClass="label-mini" />
+                  <HBox spacing="8" alignment="CENTER_LEFT">
+                     <Label fx:id="lblMeuCodigo" text="----------" styleClass="identidade-codigo" />
+                     <Button fx:id="btnCopiarCodigo" text="📋 Copiar" onAction="#copiarCodigo"
+                             styleClass="botao-secundario" />
+                  </HBox>
+               </VBox>
+
+            </HBox>
+         </VBox>
+
+         <!-- Bloco "conectar por código" -->
+         <VBox styleClass="card-conectar" spacing="10">
+            <Label text="Conectar a outro computador" styleClass="label-campo" />
+            <HBox spacing="10" alignment="CENTER_LEFT">
+               <TextField fx:id="txtCodigo" promptText="Digite o código do computador"
+                          styleClass="text-field" HBox.hgrow="ALWAYS" />
+               <Button text="Conectar" onAction="#conectarPorCodigo" />
+            </HBox>
+         </VBox>
+      </VBox>
+   </top>
+
+   <center>
+      <VBox spacing="10">
+         <padding>
+            <Insets top="4" right="32" bottom="16" left="32" />
+         </padding>
+
+         <Label text="Acessados recentemente" styleClass="secao-titulo" />
+
+         <TableView fx:id="tabelaRecentes" styleClass="tabela-recentes" VBox.vgrow="ALWAYS">
+            <placeholder>
+               <Label text="Nenhum computador acessado ainda" styleClass="subtitulo" />
+            </placeholder>
+            <columns>
+               <TableColumn fx:id="colComputador" text="Computador" prefWidth="320" />
+               <TableColumn fx:id="colCodigo" text="Código" prefWidth="120" />
+               <TableColumn fx:id="colStatus" text="Status" prefWidth="100" />
+            </columns>
+            <columnResizePolicy>
+               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+         </TableView>
+      </VBox>
+   </center>
+
+</BorderPane>

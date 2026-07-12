@@ -1,0 +1,224 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #1e1e1e;
+}
+
+/* ===== Barra de navegação ===== */
+.nav-bar {
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 8 12 8 12;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 0 0 1 0;
+}
+
+.nav-icon-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 15px;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.nav-icon-btn:hover { -fx-background-color: #3a3a3a; }
+.nav-icon-btn:pressed { -fx-background-color: #454545; }
+
+.caminho-field {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #444444;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 13px;
+}
+.caminho-field:focused { -fx-border-color: #4da3ff; }
+
+/* ===== Tabela ===== */
+.tabela-arquivos {
+    -fx-background-color: #1e1e1e;
+    -fx-table-cell-border-color: transparent;
+}
+
+.tabela-arquivos .column-header-background {
+    -fx-background-color: #262626;
+}
+
+.tabela-arquivos .column-header,
+.tabela-arquivos .filler {
+    -fx-background-color: #262626;
+    -fx-border-color: transparent #333333 transparent transparent;
+}
+
+.tabela-arquivos .column-header .label {
+    -fx-text-fill: #9a9a9a;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.tabela-arquivos .table-row-cell {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.tabela-arquivos .table-row-cell:odd {
+    -fx-background-color: #232323;
+}
+
+.tabela-arquivos .table-row-cell:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.tabela-arquivos .table-row-cell:selected {
+    -fx-background-color: #294a70;
+}
+
+.tabela-arquivos .table-cell {
+    -fx-text-fill: #d4d4d4;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10 6 10;
+}
+
+.tabela-arquivos .table-row-cell:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* ===== Barra de status ===== */
+.status-bar {
+    -fx-background-color: #262626;
+    -fx-padding: 6 12 6 12;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 1 0 0 0;
+}
+.status-texto {
+    -fx-text-fill: #9a9a9a;
+    -fx-font-size: 12px;
+}
+
+
+/*home*/
+
+/* ===== Home ===== */
+.home-topo {
+    -fx-background-color: #1e1e1e;
+}
+
+.card-conectar {
+    -fx-background-color: #262626;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+    -fx-border-color: #333333;
+    -fx-border-radius: 10;
+}
+
+.secao-titulo {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #cccccc;
+}
+
+/* ===== Tabela de recentes (sem bordas, moderna) ===== */
+.tabela-recentes {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.tabela-recentes .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.tabela-recentes .column-header,
+.tabela-recentes .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #333333 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tabela-recentes .column-header .label {
+    -fx-text-fill: #8a8a8a;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+}
+
+.tabela-recentes .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #2a2a2a transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-table-cell-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 4 0 4 0;
+}
+
+.tabela-recentes .table-row-cell:hover {
+    -fx-background-color: #262626;
+}
+
+.tabela-recentes .table-row-cell:selected {
+    -fx-background-color: #2d2d2d;
+}
+
+.tabela-recentes .table-cell {
+    -fx-text-fill: #d4d4d4;
+    -fx-font-size: 13px;
+    -fx-padding: 10 10 10 10;
+    -fx-background-color: transparent;
+}
+
+/* Avatar circular com iniciais */
+.avatar-circulo {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-max-width: 30;
+    -fx-max-height: 30;
+    -fx-background-radius: 15;
+    -fx-alignment: center;
+}
+
+/* Bolinha de status */
+.status-online, .status-offline {
+    -fx-min-width: 8;
+    -fx-min-height: 8;
+    -fx-max-width: 8;
+    -fx-max-height: 8;
+    -fx-background-radius: 4;
+}
+.status-online { -fx-background-color: #2ecc71; }
+.status-offline { -fx-background-color: #6a6a6a; }
+
+.card-identidade {
+    -fx-background-color: -fx-cor-card; /* use a cor de card que você já tem */
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+}
+
+.label-mini {
+    -fx-font-size: 11px;
+    -fx-opacity: 0.6;
+    -fx-font-weight: bold;
+}
+
+.identidade-nome {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.identidade-codigo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Consolas", monospace;
+    -fx-letter-spacing: 2px;
+}
+
+.botao-icone {
+    -fx-background-color: transparent;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.botao-secundario {
+    -fx-font-size: 12px;
+}

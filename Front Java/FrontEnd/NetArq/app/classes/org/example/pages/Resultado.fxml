@@ -26,9 +26,6 @@
                     <Button fx:id="btnAtualizarLocal" text="⟳" styleClass="nav-icon-btn" onAction="#atualizarLocal" />
                     <TextField fx:id="txtCaminhoLocal" styleClass="caminho-field" onAction="#navegarPorTextoLocal"
                                HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnSelecionarPastaLocal" text="📂" styleClass="nav-icon-btn"
-                            onAction="#selecionarPastaLocal" />
-
                 </HBox>
 
                 <TableView fx:id="tabelaLocal" styleClass="tabela-arquivos" VBox.vgrow="ALWAYS">
@@ -62,9 +59,6 @@
                     <Button fx:id="btnAtualizarRemoto" text="⟳" styleClass="nav-icon-btn" onAction="#atualizarRemoto" />
                     <TextField fx:id="txtCaminhoRemoto" styleClass="caminho-field" onAction="#navegarPorTextoRemoto"
                                HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnSelecionarPastaRemoto" text="📂" styleClass="nav-icon-btn"
-                            onAction="#selecionarPastaRemoto" />
-
                 </HBox>
 
                 <TableView fx:id="tabelaRemoto" styleClass="tabela-arquivos" VBox.vgrow="ALWAYS">

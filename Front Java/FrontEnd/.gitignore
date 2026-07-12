@@ -36,3 +36,20 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Maven
+target/
+dependency-reduced-pom.xml
+
+# Java
+*.class
+*.jar
+
+# Empacotamento
+Front Java/FrontEnd/NetArq/
+
+# Runtime
+runtime/
+
+# Executáveis
+*.exe

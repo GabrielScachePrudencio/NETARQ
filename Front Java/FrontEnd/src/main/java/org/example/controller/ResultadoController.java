@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import org.example.model.Arquivo;
 import org.example.model.Computador;
 import org.example.service.ArquivoService;
@@ -339,5 +341,36 @@ public class ResultadoController {
         alert.setHeaderText(arquivo.getNome());
         alert.setContentText(mensagem);
         alert.showAndWait();
+    }
+
+    @FXML
+    public void selecionarPastaLocal(ActionEvent event) {
+        abrirSeletorDePasta(painelLocal, txtCaminhoLocal);
+    }
+
+    @FXML
+    public void selecionarPastaRemoto(ActionEvent event) {
+        abrirSeletorDePasta(painelRemoto, txtCaminhoRemoto);
+    }
+
+    private void abrirSeletorDePasta(PainelArquivos painel, TextField campoOrigem) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Selecionar pasta");
+
+        // tenta abrir já na pasta atual, se ela for um caminho local válido
+        String caminhoAtual = campoOrigem.getText();
+        if (caminhoAtual != null && !caminhoAtual.isBlank()) {
+            File pastaAtual = new File(caminhoAtual);
+            if (pastaAtual.exists() && pastaAtual.isDirectory()) {
+                chooser.setInitialDirectory(pastaAtual);
+            }
+        }
+
+        Window janela = campoOrigem.getScene().getWindow();
+        File selecionada = chooser.showDialog(janela);
+
+        if (selecionada != null) {
+            painel.navegarPara(selecionada.getAbsolutePath());
+        }
     }
 }

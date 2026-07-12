@@ -1,7 +1,13 @@
 package org.example.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class NativoScanner implements AutoCloseable {
 
@@ -16,18 +22,15 @@ public class NativoScanner implements AutoCloseable {
     private static final MethodHandle hObterDataFormatada;
     private static final MethodHandle hLiberar;
     private static final MethodHandle hObterCaminho;
-
     static {
-
-        System.load("C:\\Users\\Flavio\\Desktop\\Linguagens\\PROJETOS\\NetArq\\Backend\\nativo.dll");
+        try {
+            loadNativeLibrary();
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
 
         lookup = SymbolLookup.loaderLookup();
 
-//        // ajuste o caminho/nome conforme seu SO: "nativo.dll" ou "libnativo.so"
-//        lookup = SymbolLookup.libraryLookup(
-//                "C:\\Users\\Flavio\\Desktop\\Linguagens\\PROJETOS\\NetArq\\Backend\\nativo.dll",
-//                Arena.global()
-//        );
         hEscanear = linker.downcallHandle(
                 lookup.find("escanear").orElseThrow(),
                 FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -69,8 +72,23 @@ public class NativoScanner implements AutoCloseable {
         );
     }
 
+    private static void loadNativeLibrary() throws IOException {
+        try (InputStream in = NativoScanner.class.getResourceAsStream("/org/example/native/nativo.dll")) {
+            if (in == null) {
+                throw new FileNotFoundException(
+                        "nativo.dll não encontrada no classpath em /org/example/native/nativo.dll");
+            }
+            File temp = File.createTempFile("nativo", ".dll");
+            temp.deleteOnExit();
+            Files.copy(in, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.load(temp.getAbsolutePath());
+        }
+    }
+
     private final Arena arena = Arena.ofConfined();
     private MemorySegment handle;
+
+
 
     public void escanear(String caminho) {
         try {
