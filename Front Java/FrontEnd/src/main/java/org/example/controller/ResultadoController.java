@@ -6,6 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -16,10 +18,14 @@ import org.example.service.ComputadorService;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 public class ResultadoController {
 
@@ -130,6 +136,7 @@ public class ResultadoController {
 
             configurarColunas(colNome, colTipo, colTamanho, colData);
             configurarLinhas();
+            configurarMenuVazio();
         }
 
         private void configurarColunas(TableColumn<Arquivo, String> colNome,
@@ -160,14 +167,46 @@ public class ResultadoController {
         private void configurarLinhas() {
             tabela.setRowFactory(tv -> {
                 TableRow<Arquivo> row = new TableRow<>();
+
                 row.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2 && !row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
                         tratarDuploClique(row.getItem());
                     }
                 });
-                row.setContextMenu(criarMenuLinha(row));
+
+                ContextMenu menuLinha = criarMenuLinha(row);
+
+                // só usa o menu da linha quando ela realmente tem um item;
+                // linha vazia = sem menu próprio, deixa o menu da TableView aparecer
+                row.contextMenuProperty().bind(
+                        javafx.beans.binding.Bindings.when(row.emptyProperty())
+                                .then((ContextMenu) null)
+                                .otherwise(menuLinha)
+                );
+
                 return row;
             });
+        }
+
+        private void configurarMenuVazio() {
+            ContextMenu menuVazio = new ContextMenu();
+
+            MenuItem colarItem = new MenuItem("Colar");
+            colarItem.setOnAction(e -> {
+                if (caminhoAtual != null) {
+                    colarArquivo(caminhoAtual);
+                    atualizar();
+                }
+            });
+
+            menuVazio.getItems().add(colarItem);
+
+            menuVazio.setOnShowing(e -> {
+                boolean temArquivoNoClipboard = Clipboard.getSystemClipboard().hasFiles();
+                colarItem.setDisable(!temArquivoNoClipboard);
+            });
+
+            tabela.setContextMenu(menuVazio);
         }
 
         // ===== Navegação =====
@@ -246,20 +285,44 @@ public class ResultadoController {
         }
 
         // ===== Menu de contexto e ações de arquivo =====
-
         private ContextMenu criarMenuLinha(TableRow<Arquivo> row) {
             ContextMenu menu = new ContextMenu();
 
             MenuItem abrir = new MenuItem("Abrir");
             abrir.setOnAction(e -> tratarDuploClique(row.getItem()));
 
+            MenuItem copiarItem = new MenuItem("Copiar");
+            copiarItem.setOnAction(e -> copiarArquivo(row.getItem()));
+
             MenuItem copiarCaminho = new MenuItem("Copiar caminho");
             copiarCaminho.setOnAction(e -> copiarParaClipboard(row.getItem().getCaminho()));
+
+            MenuItem colarItem = new MenuItem("Colar");
+            colarItem.setOnAction(e -> {
+                colarArquivo(row.getItem().getCaminho());
+                atualizar();
+            });
 
             MenuItem propriedades = new MenuItem("Propriedades");
             propriedades.setOnAction(e -> mostrarPropriedades(row.getItem()));
 
-            menu.getItems().addAll(abrir, copiarCaminho, new SeparatorMenuItem(), propriedades);
+            menu.getItems().addAll(abrir, copiarItem, copiarCaminho, colarItem,
+                    new SeparatorMenuItem(), propriedades);
+
+            menu.setOnShowing(e -> {
+                Arquivo item = row.getItem();
+                boolean linhaVazia = (item == null);
+
+                abrir.setDisable(linhaVazia);
+                copiarItem.setDisable(linhaVazia);
+                copiarCaminho.setDisable(linhaVazia);
+                propriedades.setDisable(linhaVazia);
+
+                boolean ehDiretorio = !linhaVazia && item.getEh_diretorio() == 1;
+                boolean temArquivoNoClipboard = Clipboard.getSystemClipboard().hasFiles();
+                colarItem.setDisable(!(ehDiretorio && temArquivoNoClipboard));
+            });
+
             return menu;
         }
 
@@ -326,6 +389,41 @@ public class ResultadoController {
         javafx.scene.input.ClipboardContent content = new javafx.scene.input.ClipboardContent();
         content.putString(texto);
         javafx.scene.input.Clipboard.getSystemClipboard().setContent(content);
+    }
+
+    private void copiarArquivo(Arquivo arquivo){
+        File file = new File(arquivo.getCaminho());
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putFiles(List.of(file));
+        clipboard.setContent(content);
+    }
+
+    private void colarArquivo(String stringpastaDestino){
+        File pastaDestino = new File(stringpastaDestino);
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+
+        if (!clipboard.hasFiles()) return;
+
+        StringBuilder log = new StringBuilder();
+
+        for (File origem : clipboard.getFiles()) {
+            Path caminhoOrigem = origem.toPath().toAbsolutePath().normalize();
+            Path caminhoDestino = pastaDestino.toPath().resolve(origem.getName()).toAbsolutePath().normalize();
+
+            log.append("ORIGEM: ").append(caminhoOrigem).append("\n");
+            log.append("DESTINO: ").append(caminhoDestino).append("\n");
+            log.append("Iguais? ").append(caminhoOrigem.equals(caminhoDestino)).append("\n\n");
+
+            try {
+                Files.copy(caminhoOrigem, caminhoDestino, StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                log.append("ERRO: ").append(e.getClass().getSimpleName())
+                        .append(" - ").append(e.getMessage()).append("\n");
+            }
+        }
+
+        new Alert(Alert.AlertType.INFORMATION, log.toString()).showAndWait();
     }
 
     private void mostrarPropriedades(Arquivo arquivo) {
